@@ -50,3 +50,16 @@ export interface Settings {
   id?: number;
   theme: 'light' | 'dark';
 }
+
+export type GoalStatus = 'pending' | 'completed' | 'missed';
+
+export interface Goal {
+  id?: number;
+  title: string;
+  domain: Domain | 'other';
+  targetMinutes: number;
+  date: string; // YYYY-MM-DD — the day the goal is for
+  status: GoalStatus;
+  createdAt: number;
+  completedAt: number | null;
+}

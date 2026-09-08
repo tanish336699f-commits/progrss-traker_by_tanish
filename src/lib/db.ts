@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Activity, Subject, Chapter, Skill, TimerState, Settings } from './types';
+import type { Activity, Subject, Chapter, Skill, TimerState, Settings, Goal } from './types';
 
 export class ProgressDB extends Dexie {
   activities!: Table<Activity, number>;
@@ -8,6 +8,7 @@ export class ProgressDB extends Dexie {
   skills!: Table<Skill, number>;
   timer!: Table<TimerState, number>;
   settings!: Table<Settings, number>;
+  goals!: Table<Goal, number>;
 
   constructor() {
     super('progress-tracker');
@@ -46,6 +47,15 @@ export class ProgressDB extends Dexie {
         else seenS.add(s.name);
       }
       if (dupSIds.length) await db.subjects.bulkDelete(dupSIds);
+    });
+    this.version(3).stores({
+      activities: '++id, date, domain, category, createdAt',
+      subjects: '++id, name',
+      chapters: '++id, subjectId, status',
+      skills: '++id, name',
+      timer: '++id',
+      settings: '++id',
+      goals: '++id, date, status, createdAt',
     });
   }
 }

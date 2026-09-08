@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/db';
-import type { Activity } from '@/lib/types';
+import type { Activity, Goal } from '@/lib/types';
 import { formatDuration, todayStr, getLast7Days, formatDate } from '@/lib/time';
 import { useNavigatePage } from '@/lib/AppContext';
-import { Play, Clock, BookOpen, Award, ArrowRight } from 'lucide-react';
+import { Play, Clock, BookOpen, Award, ArrowRight, Target, Check, Trophy } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
@@ -14,6 +14,7 @@ export function DashboardPage() {
   const [todaySkills, setTodaySkills] = useState(0);
   const [recent, setRecent] = useState<Activity[]>([]);
   const [weekData, setWeekData] = useState<{ date: string; seconds: number }[]>([]);
+  const [todayGoals, setTodayGoals] = useState<Goal[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -32,6 +33,9 @@ export function DashboardPage() {
         seconds: all.filter((a) => a.date === d).reduce((s, a) => s + a.duration, 0),
       }));
       setWeekData(wd);
+
+      const goals = await db.goals.toArray();
+      setTodayGoals(goals.filter((g) => g.date === today));
     })();
   }, []);
 
@@ -48,6 +52,9 @@ export function DashboardPage() {
     emerald: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
     amber: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400',
   };
+
+  const completedCount = todayGoals.filter((g) => g.status === 'completed').length;
+  const allDone = todayGoals.length > 0 && completedCount === todayGoals.length;
 
   return (
     <div className="space-y-6">
@@ -78,7 +85,7 @@ export function DashboardPage() {
               className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorMap[s.color]}`}>
+                <div className={'w-10 h-10 rounded-lg flex items-center justify-center ' + colorMap[s.color]}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">{s.label}</span>
@@ -88,6 +95,54 @@ export function DashboardPage() {
           );
         })}
       </div>
+
+      {/* Today's Goals */}
+      {todayGoals.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-blue-500" />
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Today's Goals</h3>
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {completedCount}/{todayGoals.length} done
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('goals')}
+              className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+            >
+              Manage <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="space-y-2">
+            {todayGoals.map((g) => {
+              const checkClass = g.status === 'completed'
+                ? 'bg-emerald-500 border-emerald-500 text-white'
+                : g.status === 'missed'
+                ? 'bg-red-100 dark:bg-red-500/20 border-red-300 dark:border-red-500/40'
+                : 'border-gray-300 dark:border-gray-600';
+              const labelClass = g.status === 'completed'
+                ? 'text-gray-400 dark:text-gray-500 line-through'
+                : 'text-gray-700 dark:text-gray-300';
+              return (
+                <div key={g.id} className="flex items-center gap-3 py-1.5">
+                  <div className={'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ' + checkClass}>
+                    {g.status === 'completed' && <Check className="w-3 h-3" />}
+                  </div>
+                  <span className={'text-sm flex-1 ' + labelClass}>{g.title}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{g.targetMinutes}m</span>
+                </div>
+              );
+            })}
+          </div>
+          {allDone && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <span className="text-xs font-medium text-amber-600 dark:text-amber-400">All goals completed! Great job!</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Chart */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700">
@@ -164,7 +219,7 @@ export function DashboardPage() {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className={`w-2 h-2 rounded-full shrink-0 ${a.domain === 'study' ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                    className={'w-2 h-2 rounded-full shrink-0 ' + (a.domain === 'study' ? 'bg-emerald-500' : 'bg-amber-500')}
                   />
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{a.activity}</p>

@@ -1,6 +1,6 @@
-import { LayoutDashboard, BookOpen, Award, Timer, ListChecks, BarChart3, Settings, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Award, Timer, ListChecks, BarChart3, Settings, X, Target } from 'lucide-react';
 
-export type PageId = 'dashboard' | 'timer' | 'log' | 'study' | 'skills' | 'analytics' | 'settings';
+export type PageId = 'dashboard' | 'timer' | 'log' | 'study' | 'skills' | 'goals' | 'analytics' | 'settings';
 
 interface NavItem {
   id: PageId;
@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'log', label: 'Activities', icon: ListChecks },
   { id: 'study', label: 'Study', icon: BookOpen },
   { id: 'skills', label: 'Skills', icon: Award },
+  { id: 'goals', label: 'Goals', icon: Target },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];

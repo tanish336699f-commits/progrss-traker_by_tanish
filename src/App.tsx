@@ -9,10 +9,11 @@ import { TimerPage } from '@/pages/TimerPage';
 import { ActivitiesPage } from '@/pages/ActivitiesPage';
 import { StudyPage } from '@/pages/StudyPage';
 import { SkillsPage } from '@/pages/SkillsPage';
+import { GoalsPage } from '@/pages/GoalsPage';
 import { AnalyticsPage } from '@/pages/AnalyticsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 
-const titles: Record<PageId, string> = { dashboard: 'Dashboard', timer: 'Timer', log: 'Activities', study: 'Study', skills: 'Skills', analytics: 'Analytics', settings: 'Settings' };
+const titles: Record<PageId, string> = { dashboard: 'Dashboard', timer: 'Timer', log: 'Activities', study: 'Study', skills: 'Skills', goals: 'Goals', analytics: 'Analytics', settings: 'Settings' };
 
 function Page({ page }: { page: PageId }) {
   switch (page) {
@@ -21,6 +22,7 @@ function Page({ page }: { page: PageId }) {
     case 'log': return <ActivitiesPage />;
     case 'study': return <StudyPage />;
     case 'skills': return <SkillsPage />;
+    case 'goals': return <GoalsPage />;
     case 'analytics': return <AnalyticsPage />;
     case 'settings': return <SettingsPage />;
   }
