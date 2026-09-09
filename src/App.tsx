@@ -35,7 +35,7 @@ function AppContent() {
   const [page, setPage] = useState<PageId>('dashboard');
   const [menuOpen, setMenuOpen] = useState(false);
   const [ready, setReady] = useState(false);
-  useEffect(() => { seedDefaults().then(() => setReady(true)); }, []);
+  useEffect(() => { seedDefaults().catch(() => {}).finally(() => setReady(true)); }, []);
 
   if (loading || !ready) {
     return (
