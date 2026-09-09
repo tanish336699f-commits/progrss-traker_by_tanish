@@ -1,4 +1,5 @@
-import { LayoutDashboard, BookOpen, Award, Timer, ListChecks, BarChart3, Settings, X, Target } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Award, Timer, ListChecks, BarChart3, Settings, X, Target, LogOut } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
 
 export type PageId = 'dashboard' | 'timer' | 'log' | 'study' | 'skills' | 'goals' | 'analytics' | 'settings';
 
@@ -27,6 +28,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({ current, onNavigate, isOpen, onClose }: SidebarProps) {
+  const { user, signOut } = useAuth();
+  const email = user?.email ?? '';
+  const initial = email.charAt(0).toUpperCase();
   return (
     <>
       {isOpen && (
@@ -82,9 +86,24 @@ export function Sidebar({ current, onNavigate, isOpen, onClose }: SidebarProps) 
             );
           })}
         </nav>
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-800 space-y-1">
-          <p className="text-xs text-gray-400 dark:text-gray-500">Local-first · No login</p>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Made by Tanish Agarwal</p>
+        <div className="px-3 py-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
+          <div className="flex items-center gap-3 px-3">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+              {initial}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">{email}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Signed in</p>
+            </div>
+            <button
+              onClick={() => signOut()}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+              aria-label="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3">Made by Tanish Agarwal</p>
         </div>
       </aside>
     </>
