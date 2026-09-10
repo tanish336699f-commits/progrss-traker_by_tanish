@@ -15,20 +15,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     (async () => {
-      const settings = await db.settings.toCollection().first();
-      if (settings) setTheme(settings.theme);
+      try {
+        const settings = await db.settings.toCollection().first();
+        if (settings) setTheme(settings.theme);
+      } catch {}
     })();
   }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     (async () => {
-      const settings = await db.settings.toCollection().first();
-      if (settings) {
-        await db.settings.update(settings.id!, { theme });
-      } else {
-        await db.settings.add({ theme });
-      }
+      try {
+        const settings = await db.settings.toCollection().first();
+        if (settings) {
+          await db.settings.update(settings.id!, { theme });
+        } else {
+          await db.settings.add({ theme });
+        }
+      } catch {}
     })();
   }, [theme]);
 
