@@ -4,6 +4,7 @@ import { Header } from '@/components/Header';
 import { PageProvider } from '@/lib/AppContext';
 import { ThemeProvider } from '@/lib/theme';
 import { AuthProvider, useAuth } from '@/lib/auth';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { seedDefaults } from '@/lib/db';
 import { AuthPage } from '@/pages/AuthPage';
 import { DashboardPage } from '@/pages/DashboardPage';
@@ -66,11 +67,13 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
